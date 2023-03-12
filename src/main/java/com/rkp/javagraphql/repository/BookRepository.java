@@ -1,31 +1,50 @@
-//package com.rkp.javagraphql.repository;
-//
-//import com.rkp.javagraphql.model.Book;
-//import io.r2dbc.spi.Row;
-//import io.r2dbc.spi.RowMetadata;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.r2dbc.core.DatabaseClient;
-//import org.springframework.stereotype.Repository;
-//import reactor.core.publisher.Mono;
-//
-//import java.util.Map;
-//import java.util.function.BiFunction;
-//
-//@Repository
-//public class BookRepository {
-//
-//    public static final BiFunction<Row, RowMetadata, Book> MAPPING_FUNCTION = (row, rowMetaData) -> Book()
-//            .id(row.get("id", int.class))
-//            .title(row.get("name", String.class))
-//            .content(row.get("pages", int.class))
-//            .build();
-//    @Autowired
-//    private DatabaseClient databaseClient;
-//
-//    public Mono<Book> getBook(int id){
-//      return databaseClient.sql("select * from books where id = :id")
-//              .bind("id", id)
-//              .map(MAPPING_FUNCTION)
-//              .one();
-//    }
-//}
+package com.rkp.JavaGraphQL.repository;
+
+import com.rkp.JavaGraphQL.model.Book;
+import com.rkp.JavaGraphQL.model.Rating;
+import jakarta.annotation.PostConstruct;
+import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Repository
+public class BookRepository {
+
+    private final AuthorRepository authorRepository;
+
+    private List<Book> books = new ArrayList<>();
+
+    public BookRepository(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
+    }
+
+    public List<Book> findAll() {
+        return books;
+    }
+
+    public Book findOne(Integer id) {
+        return books.stream()
+                .filter(book -> book.id() == id)
+                .findFirst().orElseThrow(() -> new RuntimeException("Book not found"));
+    }
+
+    @PostConstruct
+    private void init() {
+        books.add(new Book(1,
+                "Reactive Spring",
+                484,
+                Rating.FIVE_STARS,
+                authorRepository.findByName("Josh Long")));
+        books.add(new Book(2,
+                "Spring Boot Up & Running",
+                328,
+                Rating.FIVE_STARS,
+                authorRepository.findByName("Mark Heckler")));
+        books.add(new Book(3,
+                "Hacking with Spring Boot 2.3",
+                392,
+                Rating.FIVE_STARS,
+                authorRepository.findByName("Greg Turnquist")));
+    }
+}

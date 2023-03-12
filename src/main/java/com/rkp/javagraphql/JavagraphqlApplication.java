@@ -1,13 +1,13 @@
-package com.rkp.javagraphql;
+package com.rkp.JavaGraphQL;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JavagraphqlApplication {
+public class JavaGraphQlApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JavagraphqlApplication.class, args);
+		SpringApplication.run(JavaGraphQlApplication.class, args);
 	}
 
 }
